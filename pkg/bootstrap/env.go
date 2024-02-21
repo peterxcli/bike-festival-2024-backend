@@ -6,6 +6,14 @@ import (
 	"github.com/caarlos0/env/v9"
 )
 
+type envType string
+
+var (
+	DevelopmentEnv envType = "development"
+	ProductionEnv  envType = "production"
+	StageEnv       envType = "stage"
+)
+
 type Env struct {
 	DB     DBEnv    `envPrefix:"DB_"`
 	Redis  RedisEnv `envPrefix:"REDIS_"`
@@ -13,6 +21,7 @@ type Env struct {
 	JWT    JWTEnv   `envPrefix:"JWT_"`
 	Line   LineEnv  `envPrefix:"LINE_"`
 	Domain string   `env:"DOMAIN"`
+	Env    envType  `env:"ENV" envDefault:"development"`
 }
 
 func NewEnv() *Env {

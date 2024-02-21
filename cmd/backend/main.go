@@ -53,9 +53,14 @@ func ReverseProxy() gin.HandlerFunc {
 }
 
 func SetUpAsynqMon(app *bootstrap.Application) {
+	readonly := true
+	if app.Env.Env == bootstrap.DevelopmentEnv {
+		readonly = false
+	}
 	h := asynqmon.New(asynqmon.Options{
 		RootPath:     "/monitoring", // RootPath specifies the root for asynqmon app
 		RedisConnOpt: asynq.RedisClientOpt{Addr: app.Cache.Options().Addr},
+		ReadOnly:     readonly,
 	})
 
 	// Use Gin's Group function to create a route group with the specified prefix
