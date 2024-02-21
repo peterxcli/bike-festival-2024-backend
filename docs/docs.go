@@ -895,7 +895,6 @@ const docTemplate = `{
                     "$ref": "#/definitions/gorm.DeletedAt"
                 },
                 "events": {
-                    "description": "TODO: add more user info for line login and line message API identity",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/bikefest_pkg_model.Event"
@@ -905,6 +904,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "picture_url": {
+                    "description": "TODO: add more user info for line login and line message API identity",
                     "type": "string"
                 },
                 "updatedAt": {
