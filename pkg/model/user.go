@@ -12,6 +12,8 @@ type User struct {
 	ID   string `json:"id" gorm:"type:varchar(36);primary_key"`
 	Name string `json:"name" gorm:"type:varchar(255);index"`
 	// TODO: add more user info for line login and line message API identity
+	PictureURL string `json:"picture_url" gorm:"type:varchar(255)"`
+
 	Events []Event `gorm:"many2many:user_events;"`
 }
 

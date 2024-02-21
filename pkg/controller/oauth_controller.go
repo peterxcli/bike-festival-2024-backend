@@ -114,8 +114,9 @@ func (ctrl *OAuthController) LineLoginCallback(c *gin.Context) {
 	log.Printf("payload: %#v", payload)
 
 	user := &model.User{
-		ID:   payload.Sub,
-		Name: payload.Name,
+		ID:         payload.Sub,
+		Name:       payload.Name,
+		PictureURL: payload.Picture,
 	}
 
 	err = ctrl.userSvc.CreateFakeUser(c, user)
