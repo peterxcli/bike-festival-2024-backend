@@ -13,7 +13,7 @@ func RegisterUserRoutes(app *bootstrap.Application, controller *controller.UserC
 	r.GET("/profile", authMiddleware, controller.Profile)
 	r.GET("/:user_id", controller.GetUserByID)
 	r.POST("/refresh_token", authMiddleware, controller.RefreshToken)
-	r.GET("", controller.GetUsers)
+	r.GET("", middleware.AdminMiddleware(app.Conn), controller.GetUsers)
 	r.POST("/logout", authMiddleware, controller.Logout)
 	r.GET("/login/:user_id", controller.FakeLogin)
 	r.POST("/register", controller.FakeRegister)
