@@ -6,10 +6,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
+
 	"github.com/hibiken/asynq"
 	"github.com/line/line-bot-sdk-go/linebot"
 	"github.com/redis/go-redis/v9"
-	"log"
 )
 
 const (
@@ -48,6 +49,7 @@ func (eth *EventTaskHandler) HandleEventTask(ctx context.Context, t *asynq.Task)
 	var message linebot.SendingMessage
 	flexContainer, err := line_utils.CreateFlexMessage(&eventDetails)
 	if err != nil {
+		log.Println("Error creating flex message", err)
 		message = linebot.NewTextMessage(fmt.Sprintf("Event: %s, 即將開始", eventDetails.Name))
 	} else {
 		message = linebot.NewFlexMessage(fmt.Sprintf("Event: %s, 即將開始", eventDetails.Name), *flexContainer)
@@ -57,7 +59,7 @@ func (eth *EventTaskHandler) HandleEventTask(ctx context.Context, t *asynq.Task)
 
 	_, err = eth.bot.PushMessage(p.UserID, message).Do()
 	if err != nil {
-		log.Println(err)
+		log.Println("Error pushing message", err)
 		return err
 	}
 
