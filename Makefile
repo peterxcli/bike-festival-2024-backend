@@ -61,3 +61,6 @@ prod-up: ## Start the container for production
 
 dev-sync: ## Load the dev environment variables
 	./script/run.sh dev sync
+
+dev-test-send-line: ## Send a Event to the line bot
+	./script/run.sh dev test-send-line
