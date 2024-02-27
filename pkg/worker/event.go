@@ -39,7 +39,18 @@ func (eth *EventTaskHandler) HandleEventTask(ctx context.Context, t *asynq.Task)
 	event, err := eth.eventSvc.FindByID(ctx, p.EventID)
 
 	// convert event.EventDetail to model.EventDetails, the event.EventDetail is stringed json
-	eventDetails := model.EventDetails{}
+	eventDetails := model.EventDetails{
+		Name:        "Event Name",
+		Activity:    "Activity",
+		Project:     "Project",
+		Description: "Description",
+		Location:    "Location",
+		StartTime:   "Start Time",
+		EndTime:     "End Time",
+		Link:        "https://nckubikefestival.kktix.cc/events/17th-1",
+		Host:        "Host",
+		Date:        "Date",
+	}
 	err = json.Unmarshal([]byte(*event.EventDetail), &eventDetails)
 	if err != nil {
 		log.Println(err)
