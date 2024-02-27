@@ -30,6 +30,16 @@ type UserServiceImpl struct {
 	cache *redis.Client
 }
 
+// FindAllUserSubscribedEvents implements model.UserService.
+func (us *UserServiceImpl) FindAllUserSubscribedEvents(ctx context.Context) ([]*model.User, error) {
+	var users []*model.User
+	err := us.db.WithContext(ctx).Preload("Events").Find(&users).Error
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
 func (us *UserServiceImpl) SubscribeEvent(ctx context.Context, userID string, eventID string) error {
 	event := &model.Event{}
 	err := us.db.WithContext(ctx).Model(&model.User{ID: userID}).Association("Events").Find(event, &model.Event{ID: &eventID})

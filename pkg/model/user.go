@@ -49,4 +49,5 @@ type UserService interface {
 	SubscribeEvent(ctx context.Context, userID string, eventID string) error
 	UnsubscribeEvent(ctx context.Context, userID string, eventID string) error
 	GetUserSubscribeEvents(ctx context.Context, userID string) ([]*Event, error)
+	FindAllUserSubscribedEvents(ctx context.Context) ([]*User, error)
 }
