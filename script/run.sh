@@ -74,7 +74,7 @@ case "$action" in
         fi
         ;;
 
-    migrate|run|serve|test|bot)
+    migrate|run|serve|test|bot|sync)
         export_env $mode
         if [ "$action" = "migrate" ]; then
             go run ./cmd/migrate/migrate.go
@@ -86,6 +86,8 @@ case "$action" in
             air
         elif [ "$action" = "test" ]; then
             go test -v -cover ./...
+        elif [ "$action" = "sync" ]; then
+            go run ./cmd/sync/main.go
         else
             echo "Error: Invalid command. Choose from (generate | migrate | run | serve)"
             exit 1

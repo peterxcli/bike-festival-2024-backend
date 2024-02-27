@@ -58,3 +58,6 @@ bot: ## Run the bot
 
 prod-up: ## Start the container for production
 	./script/run.sh prod start
+
+dev-sync: ## Load the dev environment variables
+	./script/run.sh dev sync
