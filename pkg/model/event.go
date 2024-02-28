@@ -3,9 +3,11 @@ package model
 import (
 	"context"
 	"encoding/json"
+	"reflect"
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"time"
 )
 
 var (
@@ -65,6 +67,56 @@ type EventDetails struct {
 	Location    string `json:"location"`
 	Host        string `json:"host"`
 	Link        string `json:"link"`
+}
+
+func (e *EventDetails) UnmarshalJSON(data []byte) error {
+	type Alias EventDetails
+	aux := &struct {
+		*Alias
+	}{
+		Alias: (*Alias)(e),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	v := reflect.ValueOf(e).Elem()
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		fieldType := v.Type().Field(i)
+
+		if fieldType.Type.Kind() == reflect.String && field.String() == "" {
+			switch fieldType.Name {
+			case "ID":
+				field.SetString("id")
+			case "Name":
+				field.SetString("name")
+			case "Activity":
+				field.SetString("activity")
+			case "Project":
+				field.SetString("project")
+			case "Description":
+				field.SetString("description")
+			case "Date":
+				defaultTime, _ := time.Parse("2006/01/02 ", "2025/01/01")
+				field.SetString(defaultTime.Format("2006/01/02"))
+			case "StartTime":
+				field.SetString("00:00")
+			case "EndTime":
+				field.SetString("00:00")
+			case "Location":
+				field.SetString("location")
+			case "Host":
+				field.SetString("host")
+			case "Link":
+				field.SetString("https://google.com")
+			default:
+			}
+		}
+	}
+
+	return nil
 }
 
 func CaculateEventID(event *Event) (string, error) {

@@ -3,6 +3,7 @@ package service
 import (
 	"bikefest/pkg/model"
 	"context"
+	"errors"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -17,10 +18,19 @@ type EventServiceImpl struct {
 func (es *EventServiceImpl) StoreAll(ctx context.Context, events []*model.Event) error {
 	txn := es.db.WithContext(ctx).Begin()
 	for _, event := range events {
-		err := txn.WithContext(ctx).Create(event).Error
+		// check if the event already exists in the database, if so, update it, otherwise, create a new one
+		var existingEvent model.Event
+		err := txn.Where(&model.Event{ID: event.ID}).First(&existingEvent).Error
 		if err != nil {
-			txn.Rollback()
-			return err
+			if !errors.Is(err, gorm.ErrRecordNotFound) {
+				txn.Rollback()
+				return err
+			}
+			err = txn.Create(event).Error
+			if err != nil {
+				txn.Rollback()
+				return err
+			}
 		}
 	}
 	err := txn.Commit().Error
