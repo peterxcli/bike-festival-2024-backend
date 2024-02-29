@@ -57,7 +57,7 @@ func (ctrl *OAuthController) LineLogin(c *gin.Context) {
 	nonce := social.GenerateNonce()
 	redirectURL := fmt.Sprintf("%s/line-login/callback", serverURL)
 	targetURL := ctrl.lineSocialClient.GetWebLoinURL(redirectURL, state, scope, social.AuthRequestOptions{Nonce: nonce, Prompt: "consent", BotPrompt: "aggressive"})
-	c.SetCookie("state", state, 3600, "/", "", false, true)
+	// c.SetCookie("state", state, 3600, "/", "", false, true)
 	c.Redirect(http.StatusFound, targetURL)
 }
 
@@ -76,15 +76,15 @@ func (ctrl *OAuthController) LineLoginCallback(c *gin.Context) {
 	serverURL := ctrl.env.Line.ServerUrl
 	code := c.Query("code")
 	state := c.Query("state")
-	stateInCookie, err := c.Cookie("state")
-	if err != nil || stateInCookie != state {
-		c.AbortWithStatusJSON(http.StatusBadRequest, model.Response{
-			Msg: "State cookie is invalid",
-		})
-		return
-	}
-	log.Println("code:", code, " stateInCookie:", stateInCookie)
-	frontendURL := strings.Split(stateInCookie, "$")[0]
+	// stateInCookie, err := c.Cookie("state")
+	// if err != nil || stateInCookie != state {
+	// 	c.AbortWithStatusJSON(http.StatusBadRequest, model.Response{
+	// 		Msg: "State cookie is invalid",
+	// 	})
+	// 	return
+	// }
+	// log.Println("code:", code, " stateInCookie:", stateInCookie)
+	frontendURL := strings.Split(state, "$")[0]
 	token, err := ctrl.lineSocialClient.GetAccessToken(fmt.Sprintf("%s/line-login/callback", serverURL), code).Do()
 	if err != nil {
 		log.Println("RequestLoginToken err:", err)
@@ -111,7 +111,8 @@ func (ctrl *OAuthController) LineLoginCallback(c *gin.Context) {
 		log.Println("DecodeIDToken err:", err)
 		return
 	}
-	log.Printf("payload: %#v", payload)
+	// log.Printf("payload:")
+	// spew.Dump(payload)
 
 	user := &model.User{
 		ID:         payload.Sub,
@@ -149,6 +150,6 @@ func (ctrl *OAuthController) LineLoginCallback(c *gin.Context) {
 	c.SetCookie("access_token", fmt.Sprintf("Bearer %s", accessToken), 3600, "/", "", false, true)
 	c.SetCookie("refresh_token", fmt.Sprintf("Bearer %s", refreshToken), 3600, "/", "", false, true)
 	// redirect to frontend
-	log.Println("redirect to frontend:", frontendURL)
+	// log.Println("redirect to frontend:", frontendURL)
 	c.Redirect(http.StatusFound, fmt.Sprintf("%s?access_token=%s&refresh_token=%s", frontendURL, accessToken, refreshToken))
 }
