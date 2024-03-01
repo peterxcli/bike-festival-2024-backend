@@ -2,6 +2,7 @@
 
 ## API Document
 
+### [Offical Site](https://nckubikefestival.ncku.edu.tw/BikeFestival17th-Frontend/)
 ### [Swagger API Document](https://gdsc-ncku.github.io/bike-festival-2024-backend/)
 
 ## Line Login
